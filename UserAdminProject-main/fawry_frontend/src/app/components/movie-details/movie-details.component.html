@@ -1,0 +1,110 @@
+<div class="container" *ngIf="movie">
+  <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+  <div class="alert alert-success" *ngIf="ratingSuccess">
+    {{ ratingSuccess }}
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <img
+        [src]="movie.poster"
+        *ngIf="movie.poster && movie.poster !== 'N/A'"
+        class="img-fluid rounded"
+        alt="{{ movie.title }}"
+      />
+      <div
+        class="placeholder-poster"
+        *ngIf="!movie.poster || movie.poster === 'N/A'"
+      >
+        No Image Available
+      </div>
+    </div>
+    <div class="col-md-8">
+      <h2>{{ movie.title }}</h2>
+      <div class="badge bg-primary me-2">{{ movie.year }}</div>
+      <div class="badge bg-secondary me-2" *ngIf="movie.rated">
+        {{ movie.rated }}
+      </div>
+      <div class="badge bg-info me-2" *ngIf="movie.runtime">
+        {{ movie.runtime }}
+      </div>
+
+      <div class="mt-3">
+        <h5>Rating: {{ movie.rating || "Not rated yet" }}</h5>
+        <div class="progress" *ngIf="movie.rating">
+          <div
+            class="progress-bar"
+            role="progressbar"
+            [style.width]="movie.rating * 10 + '%'"
+            [attr.aria-valuenow]="movie.rating"
+            aria-valuemin="0"
+            aria-valuemax="10"
+          >
+            {{ movie.rating }}/10
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <h5>Plot</h5>
+        <p>{{ movie.plot }}</p>
+      </div>
+
+      <div class="mt-3" *ngIf="movie.director">
+        <h5>Director</h5>
+        <p>{{ movie.director }}</p>
+      </div>
+
+      <div class="mt-3" *ngIf="movie.actors">
+        <h5>Cast</h5>
+        <p>{{ movie.actors }}</p>
+      </div>
+
+      <div class="mt-4" *ngIf="!authService.isAdmin()">
+        <h5>Rate this movie</h5>
+        <form [formGroup]="ratingForm" (ngSubmit)="submitRating()">
+          <div class="input-group">
+            <input
+              type="number"
+              formControlName="rating"
+              class="form-control"
+              placeholder="Rate (1-10)"
+              min="1"
+              max="10"
+              [ngClass]="{
+                'is-invalid':
+                  ratingSubmitted && ratingForm.controls['rating'].errors
+              }"
+            />
+            <button class="btn btn-primary" type="submit" [disabled]="loading">
+              <span
+                *ngIf="loading"
+                class="spinner-border spinner-border-sm me-1"
+              ></span>
+              Submit Rating
+            </button>
+          </div>
+          <div
+            *ngIf="ratingSubmitted && ratingForm.controls['rating'].errors"
+            class="invalid-feedback d-block"
+          >
+            <div *ngIf="ratingForm.controls['rating'].errors?.['required']">
+              Rating is required
+            </div>
+            <div
+              *ngIf="ratingForm.controls['rating'].errors?.['min'] || ratingForm.controls['rating'].errors?.['max']"
+            >
+              Rating must be between 1 and 10
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container d-flex justify-content-center" *ngIf="loading && !movie">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

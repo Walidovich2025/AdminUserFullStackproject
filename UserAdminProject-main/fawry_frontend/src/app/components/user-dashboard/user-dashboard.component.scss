@@ -1,0 +1,16 @@
+.card-img-top {
+  height: 300px;
+  object-fit: cover;
+}
+
+.pagination {
+  cursor: pointer;
+}
+
+.card {
+  transition: transform 0.3s;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
