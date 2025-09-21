@@ -28,20 +28,20 @@ public class MovieController {
     
     // Admin endpoints
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/search")
+    @GetMapping("/movies/omdb")
     public ResponseEntity<?> searchOmdbMovies(
-            @RequestParam String query,
+            @RequestParam String title,
             @RequestParam(defaultValue = "1") int page) {
         try {
-            Map<String, Object> result = omdbService.searchMovies(query, page);
+            Map<String, Object> result = omdbService.searchMovies(title, page);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error searching movies: " + e.getMessage());
         }
     }
-    
+
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/movies")
+    @PostMapping("/movies")
     public ResponseEntity<?> addMovie(@RequestBody Movie movie) {
         if (movieService.existsByImdbId(movie.getImdbId())) {
             return ResponseEntity.badRequest().body("Movie already exists in database");
@@ -52,14 +52,14 @@ public class MovieController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/movies/{id}")
+    @DeleteMapping("/movies/{id}")
     public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.ok("Movie deleted successfully");
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/movies/batch")
+    @PostMapping("/movies/batch")
     public ResponseEntity<?> addMovies(@RequestBody Movie[] movies) {
         for (Movie movie : movies) {
             if (!movieService.existsByImdbId(movie.getImdbId())) {
@@ -68,9 +68,9 @@ public class MovieController {
         }
         return ResponseEntity.ok("Movies added successfully");
     }
-    
+
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/movies/batch")
+    @DeleteMapping("/movies/batch")
     public ResponseEntity<?> deleteMovies(@RequestBody Long[] ids) {
         for (Long id : ids) {
             movieService.deleteMovie(id);

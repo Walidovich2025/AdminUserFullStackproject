@@ -26,10 +26,10 @@ public class OmdbService {
     
    
     
-    public Map<String, Object> searchMovies(String query, int page) {
+    public Map<String, Object> searchMovies(String title, int page) {
         String url = UriComponentsBuilder.fromHttpUrl(omdbApiUrl)
                 .queryParam("apikey", omdbApiKey)
-                .queryParam("s", query)
+                .queryParam("s", title)
                 .queryParam("page", page)
                 .toUriString();
         
